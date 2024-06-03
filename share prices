@@ -1,0 +1,26 @@
+цены акциий компаний Apple, Google, Microsoft.
+
+import requests
+
+API_KEY = 'YOUR_API_KEY'
+stocks = {
+    'AAPL': 'Apple Inc.',
+    'GOOGL': 'Alphabet Inc.',
+    'MSFT': 'Microsoft Corporation'
+}
+
+selected_stock = input("Введите символ акции (например, AAPL, GOOGL, MSFT): ").upper()
+
+if selected_stock in stocks:
+    url = f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={selected_stock}&apikey={API_KEY}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        time_series = data['Time Series (Daily)']
+        print(f'Данные для акции {stocks[selected_stock]}:')
+        for date, values in list(time_series.items())[:5]:
+            print(f'Дата: {date}, Цена закрытия: {values["4. close"]}')
+    else:
+        print(f'Ошибка при запросе к API для акции {stocks[selected_stock]}:', response.status_code)
+else:
+    print("Выбранная акция не найдена.")
